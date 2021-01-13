@@ -43,7 +43,7 @@ load([folder,last_file],'mydata'); % only loads variables specified
     % model scales
 % mydata.[genus].[species].all_scales % array of scales
     % model sinking velocities
-%mydata.[genus].[species].U % one sinking velocity per model scale (RD: is this written?)
+%mydata.[genus].[species].U % one sinking velocity per model scale
     % predicted operating point
 %mydata.[genus].[species].p_point.cubic % using a cubic spline
 % mydata.[genus].[species]..p_point.linear % using a linear spline
@@ -73,7 +73,7 @@ spline_options.V_S.degree = 'linear';   %
         % unit_value: if 1 then in volume is in m^-3
         %             if 100 then volume is in cm^-3
         %             if 1000 then volume is in mm^-3
-        %             if 1000,000 then volume is in µm^-3    
+        %             if 1000,000 then volume is in Âµm^-3    
 unit_value = 1000;
 
 % Settings for Re/Cd Curve
@@ -130,11 +130,11 @@ constants.real.rho_m = 2830; % Particle density (i.e. CaCO3)
         data.V = data.M / 1000 / constants.tank.rho_m; % model volume (m^3) based on measured mass and assumed density
         %data.V = data.real.V * data.S.^3;  % uncomment this to use scaled volume based on STL instead of measured volume from model mass
         
-        % RD: is this needed?
-        L_factor = 1;  %what if we defined L differently?  this can be thought of as scaling L by some factor, which will propagate into our Re values
+        
+        L_factor = 1;  %This can be thought of as scaling L by some factor, which will propagate into Re values. Posisbly helpful if L is being defined differently to maximum length parellel to flow
         data.real.L = data.real.L * L_factor;
         
-        A_factor = 1;  %what if we defined A differently?  this can be thought of as scaling A by some factor, which will propagate into our Cd values
+        A_factor = 1;  %This can be thought of as scaling A by some factor, which will propagate into Cd values, as with L
         data.real.A = data.real.A * A_factor;
         
         % in theory, we can change L_factor and A_factor (e.g. how we define L and A) independently, though we
@@ -158,8 +158,8 @@ constants.real.rho_m = 2830; % Particle density (i.e. CaCO3)
             end
         end
         
-        %RD: delete this?
-        % fake data for debugging
+      
+        % data for debugging
         % data.real.L = 0.0003;  data.real.A = 7E-7;  data.real.V = 0.08E-11;
         %         data.S = [10 12 14 17.5 22 35 54];
         %         data.V = data.real.V * data.S.^3;
@@ -200,12 +200,12 @@ constants.real.rho_m = 2830; % Particle density (i.e. CaCO3)
         elseif unit_value == 1000;
            ylab = ylabel('Volume ({\it V}) (mm^3)', 'interpreter', 'tex');
         elseif unit_value == 1000000;
-           ylab = ylabel('Volume ({\it V}) (µm^3)', 'interpreter', 'tex');
+           ylab = ylabel('Volume ({\it V}) (Âµm^3)', 'interpreter', 'tex');
         end 
         set(ylab, 'FontName', 'Cambria Math')
         set(xlab, 'FontName', 'Cambria Math')
         % Specify the legend properties:
-        leg = legend({'\it {M}/\it {\rho_{particle}}','{\it H(S)} (Spline Fit)','Scaled up from µCT scan'},'location','northwest', 'interpreter', 'tex'); 
+        leg = legend({'\it {M}/\it {\rho_{particle}}','{\it H(S)} (Spline Fit)','Scaled up from ÂµCT scan'},'location','northwest', 'interpreter', 'tex'); 
             set(leg, 'FontSize', 12)             % legend font size
             set(leg, 'FontName', 'Cambria Math') % legend font 
         tit_head = title(strcat(genus,{' '},species));  % make the title
@@ -265,8 +265,6 @@ constants.real.rho_m = 2830; % Particle density (i.e. CaCO3)
    % goes with figure from predict real life results in above cell
 %         title({species,['Predicted operating point:  ','Re = ',num2str(Re),'  Cd_{Inf} = ',num2str(Cd_Inf),'  S = ',num2str(S), ' U = ', num2str(realU)]});
         
-% RD: can you check what of this is needed. i know it's not all of it, but
-% maybe some (e.g. enforce S in numerical order)
         if plot_reps
             % you sometimes seem to not have an each_scale field....
             if isfield(mydata.(genus).(species) , 'each_scale')
